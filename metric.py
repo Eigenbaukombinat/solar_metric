@@ -6,7 +6,12 @@ import json.decoder
 import logging
 import time
 from prometheus_client import start_http_server, Gauge
+from optparse import OptionParser
 
+parser = OptionParser()
+parser.add_option("-m", "--mqtt_server", dest="mqtt_server",
+                  help="mqtt server ip or host", default="localhost")
+(options, args) = parser.parse_args()
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +53,7 @@ start_http_server(5055, 'localhost')
 
 # connect mqtt
 c = mqtt.Client('mqtt_to_prometheus_v2')
-c.connect('xxx')
+c.connect(options.mqtt_server)
 #c.subscribe('tele/inverter_SG12RT/SENSOR')
 #c.subscribe('tele/inverter_SH10RT/SENSOR')
 c.subscribe('inverter/SG12RT/registers')
