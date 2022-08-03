@@ -36,7 +36,27 @@ sh10rt_export_power = Gauge('solar_sh10rt_export_power', 'SH10RT Export Power (W
 sh10rt_power_meter = Gauge('solar_sh10rt_power_meter', 'SH10RT Power Meter (W)')
 sh10rt_bus_voltage = Gauge('solar_sh10rt_bus_voltage', 'SH10RT Bus Voltage (V)')
 
-
+sh10rt_battery_capacity = Gauge('solar_sh10rt_battery_capacity', 'SH10RT Battery Battery Capacity (kWh)')
+sh10rt_battery_charge_power_from_pv = Gauge('solar_sh10rt_battery_charge_power_from_pv', 'SH10RT Battery Battery Charge Power From PV (W)')
+sh10rt_battery_charge_power_from_pv_monthly = Gauge('solar_sh10rt_battery_charge_power_from_pv_monthly', 'SH10RT Battery Battery Charge Power From PV Monthly (W)')
+sh10rt_battery_charge_power_from_pv_today = Gauge('solar_sh10rt_battery_charge_power_from_pv_today', 'SH10RT Battery Battery Charge Power From PV Today (W)')
+sh10rt_battery_charge_power_from_pv_yearly = Gauge('solar_sh10rt_battery_charge_power_from_pv_yearly', 'SH10RT Battery Battery Charge Power From PV Yearly (W)')
+sh10rt_battery_current = Gauge('solar_sh10rt_battery_current', 'SH10RT Battery Battery Current (A)')
+sh10rt_battery_fault = Gauge('solar_sh10rt_battery_fault', 'SH10RT Battery Battery Fault ()')
+sh10rt_battery_level = Gauge('solar_sh10rt_battery_level', 'SH10RT Battery Battery Level (%)')
+sh10rt_battery_pack_voltage = Gauge('solar_sh10rt_battery_pack_voltage', 'SH10RT Battery Battery Pack Voltage (V)')
+sh10rt_battery_power = Gauge('solar_sh10rt_battery_power', 'SH10RT Battery Battery Power (W)')
+sh10rt_battery_state_of_healthy = Gauge('solar_sh10rt_battery_state_of_healthy', 'SH10RT Battery Battery State Of Healthy (%)')
+sh10rt_battery_temperature = Gauge('solar_sh10rt_battery_temperature', 'SH10RT Battery Battery Temperature (°C)')
+sh10rt_battery_voltage = Gauge('solar_sh10rt_battery_voltage', 'SH10RT Battery Battery Voltage (V)')
+sh10rt_daily_battery_charge_from_pv = Gauge('solar_sh10rt_daily_battery_charge_from_pv', 'SH10RT Battery Daily Battery Charge From PV (kWh)')
+sh10rt_daily_battery_discharge_energy = Gauge('solar_sh10rt_daily_battery_discharge_energy', 'SH10RT Battery Daily Battery Discharge Energy (kWh)')
+sh10rt_daily_charge_energy = Gauge('solar_sh10rt_daily_charge_energy', 'SH10RT Battery Daily Charge Energy (kWh)')
+sh10rt_max_charging_current = Gauge('solar_sh10rt_max_charging_current', 'SH10RT Battery Max Charging Current (A)')
+sh10rt_max_discharging_current = Gauge('solar_sh10rt_max_discharging_current', 'SH10RT Battery Max Discharging Current (A)')
+sh10rt_total_battery_charge_from_pv = Gauge('solar_sh10rt_total_battery_charge_from_pv', 'SH10RT Battery Total Battery Charge From PV (kWh)')
+sh10rt_total_battery_discharge_energy = Gauge('solar_sh10rt_total_battery_discharge_energy', 'SH10RT Battery Total Battery Discharge Energy (kWh)')
+sh10rt_total_charge_energy = Gauge('solar_sh10rt_total_charge_energy', 'SH10RT Battery Total Charge Energy (kWh)')
 
 
 sg12rt_daily_power_yields = Gauge('solar_sg12rt_daily_power_yields', 'SG12RT Daily Power Yields (kWh)')
@@ -45,6 +65,10 @@ sg12rt_monthly_power_yields= Gauge('solar_sg12rt_monthly_power_yields', 'SG12RT 
 sg12rt_total_active_power = Gauge('solar_sg12rt_total_active_power', 'SG12RT Total Active Power (W)')
 sg12rt_load_power = Gauge('solar_sg12rt_load_power', 'SG12RT Load Power (W)')
 sg12rt_bus_voltage = Gauge('solar_sg12rt_bus_voltage', 'SG12RT Bus Voltage (V)')
+
+
+
+
 
 # Start up the server to expose the metrics.
 #start_http_server(5055)
@@ -91,6 +115,27 @@ def on_message(client, data, message):
         sh10rt_export_power.set(solar_data.get('export_power', 0))
         sh10rt_power_meter.set(solar_data.get('power_meter', 0))
         sh10rt_bus_voltage.set(solar_data.get('bus_voltage', 0))
+        sh10rt_battery_capacity.set(solar_data.get('battery_capacity', 0))
+        sh10rt_battery_charge_power_from_pv.set(solar_data.get('battery_charge_power_from_pv', 0))
+        sh10rt_battery_charge_power_from_pv_monthly.set(solar_data.get('battery_charge_power_from_pv_monthly', 0))
+        sh10rt_battery_charge_power_from_pv_today.set(solar_data.get('battery_charge_power_from_pv_today', 0))
+        sh10rt_battery_charge_power_from_pv_yearly.set(solar_data.get('battery_charge_power_from_pv_yearly', 0))
+        sh10rt_battery_current.set(solar_data.get('battery_current', 0))
+        sh10rt_battery_fault.set(solar_data.get('battery_fault', 0))
+        sh10rt_battery_level.set(solar_data.get('battery_level', 0))
+        sh10rt_battery_pack_voltage.set(solar_data.get('battery_pack_voltage', 0))
+        sh10rt_battery_power.set(solar_data.get('battery_power', 0))
+        sh10rt_battery_state_of_healthy.set(solar_data.get('battery_state_of_healthy', 0))
+        sh10rt_battery_temperature.set(solar_data.get('battery_temperature', 0))
+        sh10rt_battery_voltage.set(solar_data.get('battery_voltage', 0))
+        sh10rt_daily_battery_charge_from_pv.set(solar_data.get('daily_battery_charge_from_pv', 0))
+        sh10rt_daily_battery_discharge_energy.set(solar_data.get('daily_battery_discharge_energy', 0))
+        sh10rt_daily_charge_energy.set(solar_data.get('daily_charge_energy', 0))
+        sh10rt_max_charging_current.set(solar_data.get('max_charging_current', 0))
+        sh10rt_max_discharging_current.set(solar_data.get('max_discharging_current', 0))
+        sh10rt_total_battery_charge_from_pv.set(solar_data.get('total_battery_charge_from_pv', 0))
+        sh10rt_total_battery_discharge_energy.set(solar_data.get('total_battery_discharge_energy', 0))
+        sh10rt_total_charge_energy.set(solar_data.get('total_charge_energy', 0))
     elif solar_data.get('device_type_code') == 'SG12RT':
         print('Got data for sg12rt.')
         sg12rt_daily_power_yields.set(solar_data.get('daily_power_yields', 0))
