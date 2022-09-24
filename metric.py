@@ -1,11 +1,11 @@
 import paho.mqtt.client as mqtt
-import pprint
+import logging
 import time
 import json
 import json.decoder
-import logging
 import time
 from prometheus_client import start_http_server, Gauge
+
 from optparse import OptionParser
 
 parser = OptionParser()
@@ -16,58 +16,6 @@ parser.add_option("-m", "--mqtt_server", dest="mqtt_server",
 logger = logging.getLogger(__name__)
 
 
-sh10rt_load_power = Gauge('solar_sh10rt_load_power', 'SH10RT Load Power (W)')
-sh10rt_daily_power_yields = Gauge('solar_sh10rt_daily_power_yields', 'SH10RT Daily Power Yields (kWh)')
-sh10rt_total_power_yields= Gauge('solar_sh10rt_total_power_yields', 'SH10RT Total Power Yields (kWh)')
-sh10rt_total_pv_generation = Gauge('solar_sh10rt_total_pv_generation', 'SH10RT Total PV Generation (kWh)')
-sh10rt_total_pv_export = Gauge('solar_sh10rt_total_pv_export', 'SH10RT Total PV Export (kWh)')
-sh10rt_daily_pv_export = Gauge('solar_sh10rt_daily_pv_export' , 'SH10RT Daily PV Export (kWh)')
-sh10rt_load_power_hybrid = Gauge('solar_sh10rt_load_power_hybrid', 'SH10RT Load Power Hybrid (W)')
-sh10rt_export_power_hybrid = Gauge('solar_sh10rt_export_power_hybrid', 'SH10RT Export Power Hybrid (W)')
-sh10rt_daily_direct_energy_comsumption = Gauge('solar_sh10rt_daily_direct_energy_consumption', 'SH10RT Daily Direct Energy Consumption (kWh)')
-sh10rt_total_direct_energy_comsumption = Gauge('solar_sh10rt_total_direct_energy_consumption', 'SH10RT Total Direct Energy Consumption (kWh)')
-sh10rt_self_consumption_of_day = Gauge('solar_sh10rt_self_consumption_of_day', 'SH10RT Self Consumption Of Day (%)')
-sh10rt_total_import_energy = Gauge('solar_sh10rt_total_import_energy', 'SH10RT Total Import Energy (kWh)')
-sh10rt_daily_import_energy = Gauge('solar_sh10rt_daily_import_energy' , 'SH10RT Daily Import Energy (kWh)')
-sh10rt_daily_export_energy = Gauge('solar_sh10rt_daily_export_energy' , 'SH10RT Daily Export Energy (kWh)')
-
-sh10rt_total_active_power = Gauge('solar_sh10rt_total_active_power', 'SH10RT Total Active Power (W)')
-sh10rt_export_power = Gauge('solar_sh10rt_export_power', 'SH10RT Export Power (W)')
-sh10rt_power_meter = Gauge('solar_sh10rt_power_meter', 'SH10RT Power Meter (W)')
-sh10rt_bus_voltage = Gauge('solar_sh10rt_bus_voltage', 'SH10RT Bus Voltage (V)')
-
-sh10rt_battery_capacity = Gauge('solar_sh10rt_battery_capacity', 'SH10RT Battery Capacity (kWh)')
-sh10rt_battery_charge_power_from_pv = Gauge('solar_sh10rt_battery_charge_power_from_pv', 'SH10RT Battery Charge Power From Pv (W)')
-sh10rt_battery_charge_power_from_pv_monthly = Gauge('solar_sh10rt_battery_charge_power_from_pv_monthly', 'SH10RT Battery Charge Power From Pv Monthly (W)')
-sh10rt_battery_charge_power_from_pv_today = Gauge('solar_sh10rt_battery_charge_power_from_pv_today', 'SH10RT Battery Charge Power From Pv Today (W)')
-sh10rt_battery_charge_power_from_pv_yearly = Gauge('solar_sh10rt_battery_charge_power_from_pv_yearly', 'SH10RT Battery Charge Power From Pv Yearly (W)')
-sh10rt_battery_current = Gauge('solar_sh10rt_battery_current', 'SH10RT Battery Current (A)')
-sh10rt_battery_fault = Gauge('solar_sh10rt_battery_fault', 'SH10RT Battery Fault ()')
-sh10rt_battery_level = Gauge('solar_sh10rt_battery_level', 'SH10RT Battery Level (%)')
-sh10rt_battery_pack_voltage = Gauge('solar_sh10rt_battery_pack_voltage', 'SH10RT Battery Pack Voltage (V)')
-sh10rt_battery_power = Gauge('solar_sh10rt_battery_power', 'SH10RT Battery Power (W)')
-sh10rt_battery_state_of_healthy = Gauge('solar_sh10rt_battery_state_of_healthy', 'SH10RT Battery State Of Healthy (%)')
-sh10rt_battery_temperature = Gauge('solar_sh10rt_battery_temperature', 'SH10RT Battery Temperature (°C)')
-sh10rt_battery_voltage = Gauge('solar_sh10rt_battery_voltage', 'SH10RT Battery Voltage (V)')
-sh10rt_daily_battery_charge_from_pv = Gauge('solar_sh10rt_daily_battery_charge_from_pv', 'SH10RT Daily Battery Charge From Pv (kWh)')
-sh10rt_daily_battery_discharge_energy = Gauge('solar_sh10rt_daily_battery_discharge_energy', 'SH10RT Daily Battery Discharge Energy (kWh)')
-sh10rt_daily_charge_energy = Gauge('solar_sh10rt_daily_charge_energy', 'SH10RT Daily Charge Energy (kWh)')
-sh10rt_max_charging_current = Gauge('solar_sh10rt_max_charging_current', 'SH10RT Max Charging Current (A)')
-sh10rt_max_discharging_current = Gauge('solar_sh10rt_max_discharging_current', 'SH10RT Max Discharging Current (A)')
-sh10rt_total_battery_charge_from_pv = Gauge('solar_sh10rt_total_battery_charge_from_pv', 'SH10RT Total Battery Charge From Pv (kWh)')
-sh10rt_total_battery_discharge_energy = Gauge('solar_sh10rt_total_battery_discharge_energy', 'SH10RT Total Battery Discharge Energy (kWh)')
-sh10rt_total_charge_energy = Gauge('solar_sh10rt_total_charge_energy', 'SH10RT Total Charge Energy (kWh)')
-
-sg12rt_daily_power_yields = Gauge('solar_sg12rt_daily_power_yields', 'SG12RT Daily Power Yields (kWh)')
-sg12rt_total_power_yields= Gauge('solar_sg12rt_total_power_yields', 'SG12RT Total Power Yields (kWh)')
-sg12rt_monthly_power_yields= Gauge('solar_sg12rt_monthly_power_yields', 'SG12RT Monthly Power Yields (kWh)')
-sg12rt_total_active_power = Gauge('solar_sg12rt_total_active_power', 'SG12RT Total Active Power (W)')
-sg12rt_load_power = Gauge('solar_sg12rt_load_power', 'SG12RT Load Power (W)')
-sg12rt_bus_voltage = Gauge('solar_sg12rt_bus_voltage', 'SG12RT Bus Voltage (V)')
-
-
-
-
 
 # Start up the server to expose the metrics.
 #start_http_server(5055)
@@ -75,74 +23,65 @@ start_http_server(5055, 'localhost')
 
 
 # connect mqtt
-c = mqtt.Client('mqtt_to_prometheus_v2')
+c = mqtt.Client('mqtt_to_prometheus_v3')
 c.connect(options.mqtt_server)
-#c.subscribe('tele/inverter_SG12RT/SENSOR')
-#c.subscribe('tele/inverter_SH10RT/SENSOR')
-c.subscribe('inverter/SG12RT/registers')
-time.sleep(1)
 
+c.subscribe('inverter/SG12RT/registers')
 c.subscribe('inverter/SH10RT/registers')
-time.sleep(1)
+c.subscribe('tele/temp_hackspace/SENSOR')
+
+
 def on_log(mqttc, obj, level, string):
         print(string)
 
+
+METRICS = {}
+
+
+def get_or_create_metric(name, desc):
+    if name not in METRICS:
+        METRICS[name] = Gauge(name, desc)
+    return METRICS[name]
+
+
 def on_message(client, data, message):
     try:
-        solar_data = json.loads(message.payload.decode('utf8'))
+        data = json.loads(message.payload.decode('utf8'))
     except json.decoder.JSONDecodeError:
         print("Error while decoding json:")
         print(message.payload)
         return
-    if solar_data.get('device_type_code') == 'SH10RT':
-        print('Got data for sh10rt.')
-        sh10rt_load_power.set(solar_data.get('load_power', 0))
-        sh10rt_daily_power_yields.set(solar_data.get('daily_power_yields', 0))
-        sh10rt_total_power_yields.set(solar_data.get('total_power_yields', 0))
-        sh10rt_total_pv_generation.set(solar_data.get('total_pv_generation', 0))
-        sh10rt_total_pv_export.set(solar_data.get('total_pv_export', 0))
-        sh10rt_daily_pv_export.set(solar_data.get('daily_pv_export', 0))
-        sh10rt_load_power_hybrid.set(solar_data.get('load_power_hybrid', 0))
-        sh10rt_export_power_hybrid.set(solar_data.get('export_power_hybrid', 0))
-        sh10rt_daily_direct_energy_comsumption.set(solar_data.get('daily_direct_energy_consumption', 0))
-        sh10rt_total_direct_energy_comsumption.set(solar_data.get('total_direct_energy_consumption', 0))
-        sh10rt_self_consumption_of_day.set(solar_data.get('self_consumption_of_day', 0))
-        sh10rt_daily_export_energy.set(solar_data.get('daily_export_energy', 0))
-        sh10rt_daily_import_energy.set(solar_data.get('daily_import_energy', 0))
-        sh10rt_total_import_energy.set(solar_data.get('total_import_energy', 0))
-        sh10rt_total_active_power.set(solar_data.get('total_active_power', 0))
-        sh10rt_export_power.set(solar_data.get('export_power', 0))
-        sh10rt_power_meter.set(solar_data.get('power_meter', 0))
-        sh10rt_bus_voltage.set(solar_data.get('bus_voltage', 0))
-        sh10rt_battery_capacity.set(solar_data.get('battery_capacity', 0))
-        sh10rt_battery_charge_power_from_pv.set(solar_data.get('battery_charge_power_from_pv', 0))
-        sh10rt_battery_charge_power_from_pv_monthly.set(solar_data.get('battery_charge_power_from_pv_monthly', 0))
-        sh10rt_battery_charge_power_from_pv_today.set(solar_data.get('battery_charge_power_from_pv_today', 0))
-        sh10rt_battery_charge_power_from_pv_yearly.set(solar_data.get('battery_charge_power_from_pv_yearly', 0))
-        sh10rt_battery_current.set(solar_data.get('battery_current', 0))
-        sh10rt_battery_fault.set(solar_data.get('battery_fault', 0))
-        sh10rt_battery_level.set(solar_data.get('battery_level', 0))
-        sh10rt_battery_pack_voltage.set(solar_data.get('battery_pack_voltage', 0))
-        sh10rt_battery_power.set(solar_data.get('battery_power', 0))
-        sh10rt_battery_state_of_healthy.set(solar_data.get('battery_state_of_healthy', 0))
-        sh10rt_battery_temperature.set(solar_data.get('battery_temperature', 0))
-        sh10rt_battery_voltage.set(solar_data.get('battery_voltage', 0))
-        sh10rt_daily_battery_charge_from_pv.set(solar_data.get('daily_battery_charge_from_pv', 0))
-        sh10rt_daily_battery_discharge_energy.set(solar_data.get('daily_battery_discharge_energy', 0))
-        sh10rt_daily_charge_energy.set(solar_data.get('daily_charge_energy', 0))
-        sh10rt_max_charging_current.set(solar_data.get('max_charging_current', 0))
-        sh10rt_max_discharging_current.set(solar_data.get('max_discharging_current', 0))
-        sh10rt_total_battery_charge_from_pv.set(solar_data.get('total_battery_charge_from_pv', 0))
-        sh10rt_total_battery_discharge_energy.set(solar_data.get('total_battery_discharge_energy', 0))
-        sh10rt_total_charge_energy.set(solar_data.get('total_charge_energy', 0))
-    elif solar_data.get('device_type_code') == 'SG12RT':
-        print('Got data for sg12rt.')
-        sg12rt_daily_power_yields.set(solar_data.get('daily_power_yields', 0))
-        sg12rt_total_power_yields.set(solar_data.get('total_power_yields', 0))
-        sg12rt_monthly_power_yields.set(solar_data.get('monthly_power_yields', 0))
-        sg12rt_total_active_power.set(solar_data.get('total_active_power', 0))
-        sg12rt_load_power.set(solar_data.get('load_power', 0))
-        sg12rt_bus_voltage.set(solar_data.get('bus_voltage', 0))
+
+    topic = message.topic
+    if topic.startswith('inverter'):
+        # solar stuff
+        device = data.get('device_type_code')
+
+        # hack for negative battery power when charging
+        fac = 1
+        if data.get('state_battery_charging', 0):
+            fac = -1
+        data['battery_power'] = fac * data.get('battery_power', 0)
+
+        for key, value in data.items():
+            if type(value) not in  [type(1.0), type(1)]:
+                print(f'Ignoring {key}: {value}')
+                continue
+            # replace '-' because its invalid in metric names
+            key = key.replace('-','_')
+            metric_name = f'solar_{device.lower()}_{key}'
+            metric = get_or_create_metric(metric_name, f'{device} {key}')
+            metric.set(value)
+    elif topic.startswith('tele'):
+        sensor_name = topic[5:topic.rfind('/')]
+        # tasmota
+        if 'DS18B20' in data:
+            temp = data['DS18B20']['Temperature']
+            id_ = data['DS18B20']['Id']
+            metric = get_or_create_metric(sensor_name, f'temp {sensor_name} ({id_})')
+            metric.set(temp)
+
+
 
 
 c.on_message = on_message
@@ -153,4 +92,3 @@ while True:
     time.sleep(1)
 
 c.loop_stop()
-
