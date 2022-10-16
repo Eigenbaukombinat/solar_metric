@@ -3,10 +3,11 @@ Prometheus metric for our solar array and other energy-related stuff.
 
 It takes its values from various MQTT messages provided by our infrastructure.
 
-These are at the moment:
-* SunGrow SH10RT - Solar Hybrid Inverter
-* SunGrow SG12RT - Solar Inverter
-* Various ESP8266 with DS18B20 temperature sensor running Tasmota
+We use https://github.com/bohdan-s/SunGather to create MQTT messages with data from our solar array: 
+  * SunGrow SH10RT - Solar Hybrid Inverter
+  * SunGrow SG12RT - Solar Inverter
+
+Additionally, various ESP8266 with DS18B20 temperature sensor running Tasmota do also emit MQTT.
 
 ## Install
 
