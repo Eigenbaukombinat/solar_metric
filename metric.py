@@ -28,9 +28,7 @@ c.connect(options.mqtt_server)
 
 c.subscribe('inverter/SG12RT/registers')
 c.subscribe('inverter/SH10RT/registers')
-c.subscribe('tele/temp_hackspace/SENSOR')
-c.subscribe('tele/temp_sozialraum/SENSOR')
-c.subscribe('tele/temp_handarbeit/SENSOR')
+c.subscribe('tele/+/SENSOR')
 
 
 def on_log(mqttc, obj, level, string):
