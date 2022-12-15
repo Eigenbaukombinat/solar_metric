@@ -78,11 +78,20 @@ def on_message(client, data, message):
         if 'DS18B20' in data:
             temp = data['DS18B20']['Temperature']
             id_ = data['DS18B20']['Id']
-            metric = get_or_create_metric(sensor_name, f'temp {sensor_name} ({id_})')
+            metric = get_or_create_metric(f'{sensor_name}_ds18b20', f'temp {sensor_name} ({id_})')
             metric.set(temp)
-
-
-
+        if 'BME280' in data:
+            for key in ('Temperature', 'Humidity', 'DewPoint', 'Pressure'):
+                val = data['BME280'][key]
+                metric = get_or_create_metric(f'{sensor_name}_bme280_{key.lower()}', f'{key.lower()} {sensor_name}')
+                metric.set(val)
+        if 'ENERGY' in data:
+            total = data['ENERGY']['Total']
+            power = data['ENERGY']['Power']
+            metric_t = get_or_create_metric(f'{sensor_name}_TotalPower', f'{sensor_name} TotalPower')
+            metric_p = get_or_create_metric(f'{sensor_name}_Power', f'{sensor_name} Power')
+            metric_t.set(total)
+            metric_p.set(power)
 
 c.on_message = on_message
 c.on_log = on_log
