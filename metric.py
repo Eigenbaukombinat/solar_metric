@@ -83,8 +83,9 @@ def on_message(client, data, message):
         if 'BME280' in data:
             for key in ('Temperature', 'Humidity', 'DewPoint', 'Pressure'):
                 val = data['BME280'][key]
-                metric = get_or_create_metric(f'{sensor_name}_bme280_{key.lower()}', f'{key.lower()} {sensor_name}')
-                metric.set(val)
+                if val is not None:
+                    metric = get_or_create_metric(f'{sensor_name}_bme280_{key.lower()}', f'{key.lower()} {sensor_name}')
+                    metric.set(val)
         if 'ENERGY' in data:
             total = data['ENERGY']['Total']
             power = data['ENERGY']['Power']
