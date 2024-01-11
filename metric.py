@@ -1,12 +1,10 @@
-import paho.mqtt.client as mqtt
-import logging
-import time
+from optparse import OptionParser
+from prometheus_client import start_http_server, Gauge
 import json
 import json.decoder
+import logging
+import paho.mqtt.client as mqtt
 import time
-from prometheus_client import start_http_server, Gauge
-
-from optparse import OptionParser
 
 parser = OptionParser()
 parser.add_option("-m", "--mqtt_server", dest="mqtt_server",
@@ -26,9 +24,11 @@ start_http_server(5055, 'localhost')
 c = mqtt.Client('mqtt_to_prometheus_v3')
 c.connect(options.mqtt_server)
 
-c.subscribe('inverter/SG12RT/registers')
-c.subscribe('inverter/SH10RT/registers')
-c.subscribe('tele/+/SENSOR')
+
+def subscribe(client, *args, **kw):
+    client.subscribe('inverter/SG12RT/registers')
+    client.subscribe('inverter/SH10RT/registers')
+    client.subscribe('tele/+/SENSOR')
 
 
 def on_log(mqttc, obj, level, string):
@@ -46,7 +46,14 @@ def get_or_create_metric(name, desc):
 
 def on_message(client, data, message):
     try:
-        data = json.loads(message.payload.decode('utf8'))
+        decoded = message.payload.decode('utf8')
+    except UnicodeDecodeError:
+        print("Error while decoding message payload:")
+        print(message.payload)
+        return
+
+    try:
+        data = json.loads(decoded)
     except json.decoder.JSONDecodeError:
         print("Error while decoding json:")
         print(message.payload)
@@ -94,8 +101,18 @@ def on_message(client, data, message):
             metric_t.set(total)
             metric_p.set(power)
 
+
+def reconnect_mqtt(client, *args, **kw):
+    """Will get called when mqtt disconnects."""
+    client.disconnect()
+    time.sleep(1)
+    client.connect(options.mqtt_server)
+
+
 c.on_message = on_message
 c.on_log = on_log
+c.on_disconnect = reconnect_mqtt
+c.on_connect = subscribe
 c.loop_start()
 
 while True:
