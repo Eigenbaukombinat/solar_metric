@@ -1,0 +1,31 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11
+
+    - name: Create release
+      id: create_release
+      run: |
+        TAG=$(git describe --tags --abbrev=0)
+        FILENAME="your_project-${TAG}"
+        tar -czvf "${FILENAME}.tar.gz" -C path/to/python/code .
+        CHECKSUM_TAR=$(shasum -a 256 "${FILENAME}.tar.gz" | awk '{ print $1 }')
+        echo "Checksum (tar.gz): $CHECKSUM_TAR" > release_message.txt
+        gh release create "$TAG" "${FILENAME}.tar.gz" "${FILENAME}.zip" --title "$TAG" --notes-file release_message.txt
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
