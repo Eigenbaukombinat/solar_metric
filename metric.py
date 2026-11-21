@@ -23,7 +23,10 @@ start_http_server(5055, 'localhost')
 
 
 # connect mqtt
-c = mqtt.Client('mqtt_to_prometheus_v3')
+c = mqtt.Client(
+    callback_api_version=mqtt.CallbackAPIVersion.VERSION1,
+    client_id='mqtt_to_prometheus_v3'
+)
 c.connect(options.mqtt_server)
 
 c.subscribe('inverter/SG12RT/registers')
